@@ -9,6 +9,7 @@ namespace Backend.Data.Models
     public class Highscore
     {
         public int Id { get; set; }
+        public string Name { get; set; }
         public DateTime TimeStamp { get; set; }
         public int PointsAchieved { get; set; }
         public long Duration { get; set; }

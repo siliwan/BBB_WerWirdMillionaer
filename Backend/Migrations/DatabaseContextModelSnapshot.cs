@@ -72,6 +72,9 @@ namespace Backend.Migrations
                     b.Property<long>("Duration")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PointsAchieved")
                         .HasColumnType("int");
 

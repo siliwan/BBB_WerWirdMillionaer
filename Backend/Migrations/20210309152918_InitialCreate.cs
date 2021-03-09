@@ -13,6 +13,7 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PointsAchieved = table.Column<int>(type: "int", nullable: false),
                     Duration = table.Column<long>(type: "bigint", nullable: false),
@@ -23,17 +24,17 @@ namespace Backend.Migrations
                     table.PrimaryKey("PK_Highscores", x => x.Id);
                 });
 
-            migrationBuilder.Sql(@"EXEC(CREATE VIEW [dbo].[VHighScores] AS
+            migrationBuilder.Sql(@"CREATE VIEW [dbo].[VHighScores] AS
                                         SELECT
 	                                        [Id],
 	                                        [Name],
 	                                        [TimeStamp],
-	                                        [PointAchieved],
+	                                        [PointsAchieved],
 	                                        [Duration],
 	                                        [PointsWeighted],
 	                                        RANK() OVER (ORDER BY PointsWeighted) AS [Rank]
                                         FROM
-	                                        [dbo].[HighScores])");
+	                                        [dbo].[HighScores]");
 
             migrationBuilder.CreateTable(
                 name: "Users",
