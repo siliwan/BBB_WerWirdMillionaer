@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --mode development",
+    "watch": "vue-cli-service build --mode development",
     "clean": "npx rimraf dist"
   },
   "description": "Frontend",
@@ -12,17 +13,19 @@
     "name": ""
   },
   "dependencies": {
+    "@types/axios": "^0.14.0",
+    "axios": "^0.21.1",
     "vue": "2.5.17",
     "vue-class-component": "6.0.0",
     "vue-property-decorator": "7.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "3.0.4",
-    "@vue/cli-plugin-typescript": "3.0.4",
-    "@vue/cli-service": "3.0.4",
+    "@vue/cli-plugin-babel": "4.5.*",
+    "@vue/cli-plugin-typescript": "4.5.*",
+    "@vue/cli-service": "4.5.*",
+    "rimraf": "3.0.2",
     "typescript": "^4.2.3",
-    "vue-template-compiler": "2.5.17",
-    "rimraf": "3.0.2"
+    "vue-template-compiler": "2.5.17"
   },
   "postcss": {
     "plugins": {
