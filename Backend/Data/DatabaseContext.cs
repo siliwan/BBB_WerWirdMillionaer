@@ -1,5 +1,8 @@
 ﻿using Backend.Data.Models;
+using Backend.Data.Repositories;
+using Backend.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +48,19 @@ namespace Backend.Data
                         eb.ToView(nameof(VHighScore));
                     }
                 );
+        }
+        
+    }
+
+    public static class DatabaseContextExtensions
+    {
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddTransient<ICategoryRepository, CategoryRepository>();
+            serviceCollection.AddTransient<IHighScoreRepository, HighScoreRepository>();
+            serviceCollection.AddTransient<IQuestionRepository, QuestionRepository>();
+            serviceCollection.AddTransient<IUserRepository, UserRepository>();
+            return serviceCollection;
         }
     }
 }

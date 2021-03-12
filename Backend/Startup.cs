@@ -40,6 +40,7 @@ namespace Backend
                 ctx.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")
                 ));
+            services.AddRepositories();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Backend", Version = "v1" });
@@ -47,8 +48,8 @@ namespace Backend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, 
-                              IWebHostEnvironment env,
+        public void Configure(IApplicationBuilder app,
+                              IWebHostEnvironment env, 
                               DatabaseContext ctx)
         {
             ctx.Database.EnsureCreated();
