@@ -1,4 +1,5 @@
 using Backend.Data;
+using Backend.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +18,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Backend
@@ -33,14 +35,24 @@ namespace Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllers();
-            services.AddDirectoryBrowser();
+            services.AddControllers()
+                    .AddJsonOptions(opt =>
+                    {
+                        opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                        opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    });
+            services.AddDistributedMemoryCache();
+            services.AddSession(opt =>
+            {
+                opt.Cookie.IsEssential = true;
+            });
             services.AddDbContext<DatabaseContext>(ctx => 
                 ctx.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")
                 ));
             services.AddRepositories();
+            services.AddHttpContextAccessor();
+            services.AddGameSession();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Backend", Version = "v1" });
@@ -69,6 +81,8 @@ namespace Backend
             app.UseAuthorization();
 
             app.UseStaticFiles();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

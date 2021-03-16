@@ -1,4 +1,5 @@
 ﻿using Backend.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +60,11 @@ namespace Backend.Data.Repositories
         public Task<int> SaveChangesAsync()
         {
             return _context.SaveChangesAsync();
+        }
+
+        public DbSet<T> AsSet()
+        {
+            return _context.Set<T>();
         }
     }
 }
