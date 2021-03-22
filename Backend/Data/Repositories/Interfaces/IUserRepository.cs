@@ -9,6 +9,6 @@ namespace Backend.Data.Repositories.Interfaces
     public interface IUserRepository : IRepository<User>
     {
         void CreateUser(string username, string password);
-        bool Login(string username, string password);
+        bool Login(string username, string password, out User AuthenticatedUser);
     }
 }

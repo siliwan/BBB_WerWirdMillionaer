@@ -25,10 +25,15 @@ namespace Backend.Data.Repositories
             });
         }
 
-        public bool Login(string username, string password)
+        public bool Login(string username, string password, out User AuthenticatedUser)
         {
-            return _context.Set<User>().Any(user => user.Username.Equals(username, StringComparison.InvariantCultureIgnoreCase)
-                                                    && user.PasswordCrypt.Equals(HashString(password)));
+            var user = _context.Set<User>().Where(user => user.Username.Equals(username)
+                                                       && user.PasswordCrypt.Equals(HashString(password)))
+                                           .FirstOrDefault();
+
+            AuthenticatedUser = user;
+
+            return user != null;
         }
 
         private static string HashString(string input)

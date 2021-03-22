@@ -85,6 +85,65 @@ namespace Backend.Controllers
             Quiz.State = PlayState.Playing;
         }
 
+        [HttpPost]
+        public ActionResult<ObjectResponseWithMessage<SubmissionResult>> SubmitAnswer([FromBody] int answerId)
+        {
+            if (!game.HasActiveSession() || Quiz.State != PlayState.Playing)
+            {
+                return Unauthorized();
+            }
+
+            if(DateTime.Now <= Quiz.RoundStartedAt
+                                   .AddSeconds(ROUND_TIME_SEC)
+                                   .Ceiling(DateTimeRoundLevel.Miliseconds))
+            {
+                Quiz.State = PlayState.Lost;
+                return new ObjectResponseWithMessage<SubmissionResult> {
+                    Object = SubmissionResult.TimeUp,
+                    Message = "Time is up!"
+                };
+            }
+
+            var Answers = Session.CurrentQuiz.CurrentQuestion.Answers;
+
+            if(!Answers.Any(x => x.Id == answerId))
+            {
+                return BadRequest($"An invalid answer has been submitted with id {answerId}!");
+            }
+
+            var CorrectAnswer = Answers.First(x => x.IsCorrect);
+            if (CorrectAnswer.Id == answerId)
+            {
+                Quiz.Round++;
+                //Check if won else next round
+                if(game.HasAnsweredAllQuestions())
+                {
+                    Quiz.State = PlayState.Won;
+                    return new ObjectResponseWithMessage<SubmissionResult>
+                    {
+                        Object = SubmissionResult.Won
+                    };
+                } else
+                {
+                    game.GoToNextQuestion();
+                    return new ObjectResponseWithMessage<SubmissionResult>
+                    {
+                        Object = SubmissionResult.Correct
+                    };
+                }
+            }
+            else
+            {
+                //Bad luck, set to lost
+                Quiz.State = PlayState.Lost;
+                return new ObjectResponseWithMessage<SubmissionResult>
+                {
+                    Object = SubmissionResult.Lost,
+                    Message = $"Wrong answer. The correct answer was: {CorrectAnswer.AnswerText}"
+                };
+            }
+        }
+
         [HttpGet]
         public ActionResult<CurrentQuestion> CurrentQuestion()
         {

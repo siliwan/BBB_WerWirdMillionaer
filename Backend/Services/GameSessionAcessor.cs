@@ -43,14 +43,9 @@ namespace Backend.Services
 
         public GameSession GetOrCreateSession()
         {
-            if(!HasActiveSession())
-            {
-                return CreateSession();
-            } 
-            else
-            {
-                return GetCurrentSession();
-            }
+            return HasActiveSession() ? 
+                GetCurrentSession() 
+                : CreateSession();
         }
 
         public GameSession CreateSession()
@@ -67,6 +62,19 @@ namespace Backend.Services
             {
                 storage.ResetSession(SessionId);
             }
+        }
+
+        public bool HasAnsweredAllQuestions()
+        {
+            var Session = GetCurrentSession();
+            return questionRepository.GetRandomQuestion(Session.CurrentQuiz.QuestionsAnswered) == null;
+        }
+
+        public void GoToNextQuestion()
+        {
+            var Session = GetCurrentSession();
+            Session.CurrentQuiz.QuestionsAnswered.Add(Session.CurrentQuiz.CurrentQuestion);
+            Session.CurrentQuiz.CurrentQuestion = questionRepository.GetRandomQuestion(Session.CurrentQuiz.QuestionsAnswered);
         }
     }
 

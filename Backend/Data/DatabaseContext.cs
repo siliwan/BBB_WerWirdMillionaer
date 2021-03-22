@@ -60,6 +60,7 @@ namespace Backend.Data
             serviceCollection.AddTransient<IHighScoreRepository, HighScoreRepository>();
             serviceCollection.AddTransient<IQuestionRepository, QuestionRepository>();
             serviceCollection.AddTransient<IUserRepository, UserRepository>();
+            serviceCollection.AddTransient<IAnswerRepository, AnswerRepository>();
             return serviceCollection;
         }
     }

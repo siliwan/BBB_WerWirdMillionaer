@@ -13,5 +13,7 @@ namespace Backend.Services
         GameSession CreateSession();
         void ResetSession();
         bool HasActiveSession();
+        bool HasAnsweredAllQuestions();
+        void GoToNextQuestion();
     }
 }

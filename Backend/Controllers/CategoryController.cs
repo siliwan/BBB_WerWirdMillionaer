@@ -39,13 +39,7 @@ namespace Backend.Controllers
         {
             var Category = categoryRepository.GetById(id);
 
-            if(Category != null)
-            {
-                return Category;
-            } else
-            {
-                return NotFound();
-            }
+            return Category != null ? Category : BadRequest($"Category with id {id} does not exist.");
         }
 
         // POST api/<CategoryController>
@@ -66,11 +60,11 @@ namespace Backend.Controllers
             {
                 CategoryToModify.Name = value;
                 await categoryRepository.SaveChangesAsync();
-                NoContent();
+                Ok();
             }
             else
             {
-                NotFound();
+                NotFound($"Category with id {id} does not exist.");
             }
         }
 
@@ -88,7 +82,7 @@ namespace Backend.Controllers
             }
             else
             {
-                NotFound();
+                BadRequest($"Category with id {id} does not exist.");
             }
         }
     }

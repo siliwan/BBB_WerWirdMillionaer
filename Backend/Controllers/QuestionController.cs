@@ -1,4 +1,5 @@
 ﻿using Backend.Data.Models;
+using Backend.Data.Models.CRUD;
 using Backend.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,13 +18,16 @@ namespace Backend.Controllers
     {
         private readonly ILogger<QuestionController> logger;
         private readonly IQuestionRepository questionRepository;
+        private readonly ICategoryRepository categoryRepository;
 
         public QuestionController(
                 ILogger<QuestionController> logger,
-                IQuestionRepository questionRepository)
+                IQuestionRepository questionRepository,
+                ICategoryRepository categoryRepository)
         {
             this.logger = logger;
             this.questionRepository = questionRepository;
+            this.categoryRepository = categoryRepository;
         }
 
         // GET: api/<QuestionController>
@@ -43,16 +47,43 @@ namespace Backend.Controllers
                 return QuestionToReturn;
             } else
             {
-                return NotFound();
+                return BadRequest($"Question with id {id} does not exist.");
             }
             
         }
 
         // POST api/<QuestionController>
         [HttpPost]
-        public void Post([FromForm] string value)
+        public ActionResult Post([FromBody] QuestionObject question)
         {
-            throw new NotImplementedException();
+            if(!TryValidateModel(question))
+            {
+                return BadRequest();
+            }
+
+            var Category = categoryRepository.GetById(question.CategoryId);
+
+            if(Category == null)
+            {
+                return BadRequest("You must provide an existing category!");
+            }
+
+            try
+            {
+                questionRepository.AddQuestion(question.QuestionText,
+                                           Category,
+                                           question.Answers.Select(
+                                               q => (q.AnswerText, q.IsCorrect))
+                                           );
+
+                questionRepository.SaveChanges();
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         // PUT api/<QuestionController>/5
@@ -68,7 +99,7 @@ namespace Backend.Controllers
                 NoContent();
             } else
             {
-                NotFound();
+                BadRequest($"Question with id {id} does not exist.");
             }
         }
 
@@ -85,7 +116,7 @@ namespace Backend.Controllers
                 Ok();
             } else
             {
-                NotFound();
+                BadRequest($"Question with id {id} does not exist.");
             }
         }
     }
