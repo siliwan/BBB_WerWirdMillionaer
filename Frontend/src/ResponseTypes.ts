@@ -4,7 +4,8 @@ export interface IReferencableArray<T = Reference> extends IReferencable { $valu
 export type Reference<T = IReferencable> = { $ref: string, value: () => T }
 
 function isReference(obj: any): obj is Reference { return nameof<Reference>('$ref') in obj }
-const nameof = <T>(name: keyof T) => name;
+export const nameof = <T>(name: keyof T) => name;
+export const typedUnitialized = <T>() => null as unknown as T
 
 export class CurrentQuestion implements IReferencable {
     $id!: string;
@@ -88,6 +89,16 @@ export class User implements IReferencable{
   $id!: string;
   id!: number;
   username!: string;
+}
+
+export class ValidationErrorResponse {
+  type!: string;
+  title!: string;
+  status!: number;
+  traceId!: string;
+  errors!: {
+    $: string[]
+  }
 }
 
 export class ReferencableJsonWrapper<T> extends String {

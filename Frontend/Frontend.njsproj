@@ -57,6 +57,9 @@
   <ItemGroup>
     <Content Include="babel.config.js" />
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="src\ResponeTyped.ts" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
     <VisualStudio>

@@ -61,6 +61,19 @@ namespace Backend
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CORS",
+                builder =>
+                {
+                    builder.WithOrigins("https://localhost",
+                                        "http://localhost",
+                                        "http://localhost:8080",
+                                        "*")
+                                        .AllowAnyHeader()
+                                        .AllowAnyMethod();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,6 +94,8 @@ namespace Backend
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CORS");
 
             app.UseAuthentication();
             app.UseAuthorization();
