@@ -11,6 +11,6 @@ namespace Backend.Data.Repositories.Interfaces
         void AnsweredCorrect(Question question);
         void AnsweredWrong(Question question);
         void AddQuestion(string questionText, Category category, IEnumerable<(string Answer, bool IsCorrect)> answers);
-        Question GetRandomQuestion(ICollection<Question> questionsToExclude);
+        Question GetRandomQuestion(ICollection<Question> questionsToExclude, ICollection<Category> categories);
     }
 }

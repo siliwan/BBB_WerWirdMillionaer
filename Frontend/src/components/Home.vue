@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <h1>{{ msg }}</h1>
-        <p>Welcomee to your new single-page application, built with <a href="https://vuejs.org" target="_blank">Vue.js</a> and <a href="http://www.typescriptlang.org/" target="_blank">TypeScript</a>.</p>
+        <p>Welcome to your new single-page application, built with <a href="https://vuejs.org" target="_blank">Vue.js</a> and <a href="http://www.typescriptlang.org/" target="_blank">TypeScript</a>.</p>
         <b-table 
             striped 
             hover 
@@ -23,6 +23,7 @@
                 </b-form-group>
             </b-form>
         </b-modal>
+        <router-link to="/quiz/start">Start</router-link>
     </div>
 </template>
 

@@ -74,13 +74,15 @@ namespace Backend.Data.Repositories
             question.QuestionStatistic.AnsweredWrong++;
         }
 
-        public Question GetRandomQuestion(ICollection<Question> questionsToExclude)
+        public Question GetRandomQuestion(ICollection<Question> questionsToExclude, ICollection<Category> categories)
         {
             var QuestionKeys = questionsToExclude.Select(x => x.Id);
+            var CategoryKeys = categories.Select(x => x.Id);
             return _context.Set<Question>()
                            .Include(q => q.Answers)
                            .Include(q => q.QuestionStatistic)
                            .Include(q => q.Category)
+                           .Where(q => CategoryKeys.Contains(q.Category.Id))
                            .Where(q => !QuestionKeys.Contains(q.Id))
                            .OrderBy(o => Guid.NewGuid())
                            .FirstOrDefault();

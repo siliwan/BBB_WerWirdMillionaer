@@ -10,6 +10,7 @@ namespace Backend.Data.Models.GameSessions
         public int Points { get { return QuestionsAnswered.Count * QUESTION_VALUE; } }
         public bool HasJoker { get; set; }
         public int Round { get; set; }
+        public ICollection<Category> SelectedCategories { get; set; }
         public ICollection<Question> QuestionsAnswered { get; set; }
         public DateTime RoundStartedAt { get; set; }
         public Question CurrentQuestion { get; set; }

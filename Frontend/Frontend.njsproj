@@ -48,6 +48,7 @@
     <Folder Include="src\" />
     <Folder Include="src\assets\" />
     <Folder Include="src\components\" />
+    <Folder Include="src\services\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\main.ts" />
@@ -58,7 +59,11 @@
     <Content Include="babel.config.js" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\ResponeTyped.ts" />
+    <TypeScriptCompile Include="src\ResponseTypes.ts" />
+    <TypeScriptCompile Include="src\router.ts" />
+    <TypeScriptCompile Include="src\services\CrudBase.ts" />
+    <TypeScriptCompile Include="src\services\GameApi.ts" />
+    <TypeScriptCompile Include="src\services\Request.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

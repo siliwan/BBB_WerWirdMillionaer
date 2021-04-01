@@ -1,4 +1,5 @@
-﻿using Backend.Data.Models.GameSessions;
+﻿using Backend.Data.Models;
+using Backend.Data.Models.GameSessions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,8 @@ namespace Backend.Services
 {
     public interface IGameSessionAcessor
     {
-        GameSession GetOrCreateSession();
         GameSession GetCurrentSession();
-        GameSession CreateSession();
+        GameSession CreateSession(Category[] categories);
         void ResetSession();
         bool HasActiveSession();
         bool HasAnsweredAllQuestions();

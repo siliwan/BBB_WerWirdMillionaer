@@ -10,11 +10,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Backend.Data.Models;
 using Backend.Tools;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Backend.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [ServiceFilter(typeof(PinSessionActionFilter))]
     public class GameController : ControllerBase
     {
         private readonly ILogger<GameController> logger;
@@ -79,9 +81,9 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public void StartGame()
+        public void StartGame([FromBody] Category[] categories)
         {
-            game.GetOrCreateSession();
+            game.CreateSession(categories);
             Quiz.State = PlayState.Playing;
         }
 

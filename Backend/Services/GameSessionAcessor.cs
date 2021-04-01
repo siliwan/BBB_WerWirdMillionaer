@@ -1,4 +1,5 @@
-﻿using Backend.Data.Models.GameSessions;
+﻿using Backend.Data.Models;
+using Backend.Data.Models.GameSessions;
 using Backend.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,18 +42,12 @@ namespace Backend.Services
             return storage.GetSessionById(SessionId, out _);
         }
 
-        public GameSession GetOrCreateSession()
-        {
-            return HasActiveSession() ? 
-                GetCurrentSession() 
-                : CreateSession();
-        }
-
-        public GameSession CreateSession()
+        public GameSession CreateSession(Category[] categories)
         {
             var SessionCreated = storage.CreateSession(SessionId);
-            SessionCreated.CurrentQuiz.CurrentQuestion = questionRepository.GetRandomQuestion(new List<Data.Models.Question>());
-            httpContextAccessor.HttpContext.Session.SetString("SessionId", SessionId);
+            SessionCreated.CurrentQuiz.SelectedCategories = categories;
+            SessionCreated.CurrentQuiz.CurrentQuestion = questionRepository.GetRandomQuestion(new List<Data.Models.Question>(), SessionCreated.CurrentQuiz.SelectedCategories);
+            //httpContextAccessor.HttpContext.Session.SetString("SessionId", SessionId);
             return SessionCreated;
         }
 
@@ -67,14 +62,14 @@ namespace Backend.Services
         public bool HasAnsweredAllQuestions()
         {
             var Session = GetCurrentSession();
-            return questionRepository.GetRandomQuestion(Session.CurrentQuiz.QuestionsAnswered) == null;
+            return questionRepository.GetRandomQuestion(Session.CurrentQuiz.QuestionsAnswered, Session.CurrentQuiz.SelectedCategories) == null;
         }
 
         public void GoToNextQuestion()
         {
             var Session = GetCurrentSession();
             Session.CurrentQuiz.QuestionsAnswered.Add(Session.CurrentQuiz.CurrentQuestion);
-            Session.CurrentQuiz.CurrentQuestion = questionRepository.GetRandomQuestion(Session.CurrentQuiz.QuestionsAnswered);
+            Session.CurrentQuiz.CurrentQuestion = questionRepository.GetRandomQuestion(Session.CurrentQuiz.QuestionsAnswered, Session.CurrentQuiz.SelectedCategories);
         }
     }
 
@@ -83,6 +78,9 @@ namespace Backend.Services
         {
             serviceDescriptors.AddSingleton<IGameSessionStorage, GameSessionStorage>();
             serviceDescriptors.AddScoped<IGameSessionAcessor, GameSessionAcessor>();
+            
+            //To work, sessions have to be pinned!
+            serviceDescriptors.AddScoped<PinSessionActionFilter>();
 
             return serviceDescriptors;
         }
