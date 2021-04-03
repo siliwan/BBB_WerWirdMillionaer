@@ -11,11 +11,13 @@ using System.Threading.Tasks;
 using Backend.Data.Models;
 using Backend.Tools;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [AllowAnonymous]
     [ServiceFilter(typeof(PinSessionActionFilter))]
     public class GameController : ControllerBase
     {
@@ -75,6 +77,13 @@ namespace Backend.Controllers
         [HttpGet]
         public ActionResult<PlayState> CurrentState()
         {
+            if (game.HasActiveSession() && DateTime.Now >= Quiz.RoundStartedAt
+                                                               .AddSeconds(ROUND_TIME_SEC)
+                                                               .Ceiling(DateTimeRoundLevel.Miliseconds))
+            {
+                Quiz.State = PlayState.Lost;
+            }
+
             return !game.HasActiveSession() ? 
                 PlayState.Menu 
                 : Quiz.State;
@@ -95,7 +104,7 @@ namespace Backend.Controllers
                 return Unauthorized();
             }
 
-            if(DateTime.Now <= Quiz.RoundStartedAt
+            if(DateTime.Now >= Quiz.RoundStartedAt
                                    .AddSeconds(ROUND_TIME_SEC)
                                    .Ceiling(DateTimeRoundLevel.Miliseconds))
             {
@@ -117,6 +126,8 @@ namespace Backend.Controllers
             if (CorrectAnswer.Id == answerId)
             {
                 Quiz.Round++;
+                game.IncreaseWin();
+                Session.CurrentQuiz.QuestionsAnswered.Add(Session.CurrentQuiz.CurrentQuestion);
                 //Check if won else next round
                 if(game.HasAnsweredAllQuestions())
                 {
@@ -136,6 +147,7 @@ namespace Backend.Controllers
             }
             else
             {
+                game.IncreaseLost();
                 //Bad luck, set to lost
                 Quiz.State = PlayState.Lost;
                 return new ObjectResponseWithMessage<SubmissionResult>
@@ -155,6 +167,13 @@ namespace Backend.Controllers
             }
 
             var CurrentQuestion = Quiz.CurrentQuestion;
+
+            if (DateTime.Now >= Quiz.RoundStartedAt
+                                    .AddSeconds(ROUND_TIME_SEC)
+                                    .Ceiling(DateTimeRoundLevel.Miliseconds))
+            {
+                Quiz.State = PlayState.Lost;
+            }
 
             return new CurrentQuestion
             {
@@ -183,7 +202,7 @@ namespace Backend.Controllers
                 return 0.00;
             }
 
-            return AnsweredCorrect / AnsweredWrong;
+            return Math.Round((AnsweredWrong / (AnsweredCorrect + AnsweredWrong)) * 100, 2);
         }
 
     }

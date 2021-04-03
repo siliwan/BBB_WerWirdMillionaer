@@ -15,5 +15,7 @@ namespace Backend.Services
         bool HasActiveSession();
         bool HasAnsweredAllQuestions();
         void GoToNextQuestion();
+        void IncreaseWin();
+        void IncreaseLost();
     }
 }

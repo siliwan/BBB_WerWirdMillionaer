@@ -30,12 +30,21 @@ class GameApi {
     }
 
     async SubmitAnswer(answerId: number): Promise<SubmissionResultWithMessage> {
-        const res = await request.post<SubmissionResultWithMessage>(`${this.endpoint}/SubmitAnswer`, JSON.stringify(answerId));
+        const res = await request.post<SubmissionResultWithMessage>(`${this.endpoint}/SubmitAnswer`, JSON.stringify(answerId),
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         return res.data;
     }
 
     async GetCurrentQuestion(): Promise<CurrentQuestion> {
         const res = await request.get<CurrentQuestion>(`${this.endpoint}/CurrentQuestion`);
+        if(res.data !== undefined && typeof res.data.timeLeftUntil === 'string') {
+            res.data.timeLeftUntil = new Date(res.data.timeLeftUntil)
+        }
+
         return res.data;
     }
 }

@@ -18,7 +18,12 @@ namespace Backend.Services
 
         private string SessionId { 
             get {
-                return httpContextAccessor.HttpContext.Session.Id;
+                if (httpContextAccessor.HttpContext.Request.Headers.TryGetValue("x-quiz-session-id", out var sessIdHeader))
+                {
+                    return sessIdHeader;
+                }
+
+                return null;
             } 
         }
 
@@ -47,7 +52,7 @@ namespace Backend.Services
             var SessionCreated = storage.CreateSession(SessionId);
             SessionCreated.CurrentQuiz.SelectedCategories = categories;
             SessionCreated.CurrentQuiz.CurrentQuestion = questionRepository.GetRandomQuestion(new List<Data.Models.Question>(), SessionCreated.CurrentQuiz.SelectedCategories);
-            //httpContextAccessor.HttpContext.Session.SetString("SessionId", SessionId);
+            SessionCreated.CurrentQuiz.RoundStartedAt = DateTime.Now;
             return SessionCreated;
         }
 
@@ -70,6 +75,21 @@ namespace Backend.Services
             var Session = GetCurrentSession();
             Session.CurrentQuiz.QuestionsAnswered.Add(Session.CurrentQuiz.CurrentQuestion);
             Session.CurrentQuiz.CurrentQuestion = questionRepository.GetRandomQuestion(Session.CurrentQuiz.QuestionsAnswered, Session.CurrentQuiz.SelectedCategories);
+            Session.CurrentQuiz.RoundStartedAt = DateTime.Now;
+        }
+
+        public void IncreaseWin()
+        {
+            var Session = GetCurrentSession();
+            questionRepository.AnsweredCorrect(Session.CurrentQuiz.CurrentQuestion);
+            questionRepository.SaveChanges();
+        }
+
+        public void IncreaseLost()
+        {
+            var Session = GetCurrentSession();
+            questionRepository.AnsweredWrong(Session.CurrentQuiz.CurrentQuestion);
+            questionRepository.SaveChanges();
         }
     }
 

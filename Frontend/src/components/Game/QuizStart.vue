@@ -45,8 +45,8 @@
                                   from: Route, 
                                   next: NavigationGuardNext<Vue>) {
             let state = await GameApi.CurrentState();
-
-            if(state == PlayState.Playing) next('quiz/play')
+            console.log(state)
+            if(state == "Playing") next('/quiz/play')
             else next()
 
             

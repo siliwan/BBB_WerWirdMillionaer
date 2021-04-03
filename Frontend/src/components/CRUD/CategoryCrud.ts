@@ -1,5 +1,5 @@
 import { Category, IReferencableArray } from '@/ResponseTypes';
-import { request } from '@/services/Request';
+import { request, sessionId } from '@/services/Request';
 
 export class CategoryCrud  {
     endpoint: string;

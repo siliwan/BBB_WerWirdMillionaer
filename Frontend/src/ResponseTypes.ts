@@ -48,20 +48,19 @@ export class Answer implements IReferencable {
     question!: Reference<Question>
 }
 
-export enum PlayState {
-  Menu,
-  Playing,
-  Won,
-  Lost
-}
+export type PlayState = 
+  "Menu" |
+  "Playing" |
+  "Won" |
+  "Lost"
 
-export enum SubmissionResult {
-  Won,
-  Lost,
-  Correct,
-  TimeUp,
-  Invalid
-}
+
+export type SubmissionResult =
+"Won" |
+"Lost" |
+"Correct" |
+"TimeUp" |
+"Invalid"
 
 export class SubmissionResultWithMessage implements IReferencable {
   $id!: string;

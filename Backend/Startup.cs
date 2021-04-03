@@ -71,7 +71,8 @@ namespace Backend
                                         "http://localhost:8080",
                                         "*")
                                         .AllowAnyHeader()
-                                        .AllowAnyMethod();
+                                        .AllowAnyMethod()
+                                        .WithExposedHeaders("x-quiz-session-id");
                 });
             });
         }
@@ -103,6 +104,48 @@ namespace Backend
             app.UseStaticFiles();
 
             app.UseSession();
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.OnStarting(state =>
+                {
+                    var httpContext = (HttpContext)state;
+
+                    if (!httpContext.Request.Headers.TryGetValue("X-Quiz-Session-Id", out var sessionId)
+                    || string.IsNullOrWhiteSpace(sessionId.ToString())
+                    || sessionId.ToString() == "undefined")
+                    {
+                        var sessionIdNew = Guid.NewGuid().ToString();
+                        if (!httpContext.Response.Headers.TryAdd("x-quiz-session-id", sessionIdNew))
+                        {
+                            httpContext.Response.Headers.Append("x-quiz-session-id", sessionIdNew);
+                        }
+                        try
+                        {
+                            httpContext.Session.SetString("SessionId", sessionIdNew);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    else
+                    {
+                        httpContext.Response.Headers.TryAdd("x-quiz-session-id", sessionId);
+                        try
+                        {
+                            context.Session.SetString("SessionId", sessionId);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+
+                    httpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
+                    return Task.CompletedTask;
+                }, context);
+                await next();
+            });
 
             app.UseEndpoints(endpoints =>
             {

@@ -66,12 +66,16 @@ namespace Backend.Data.Repositories
 
         public void AnsweredCorrect(Question question)
         {
-            question.QuestionStatistic.AnsweredCorrect++;
+            _context.Set<QuestionStatistic>().Where(stat => stat.QuestionId == question.Id)
+                                             .FirstOrDefault()
+                                             .AnsweredCorrect++;
         }
 
         public void AnsweredWrong(Question question)
         {
-            question.QuestionStatistic.AnsweredWrong++;
+            _context.Set<QuestionStatistic>().Where(stat => stat.QuestionId == question.Id)
+                                             .FirstOrDefault()
+                                             .AnsweredWrong++;
         }
 
         public Question GetRandomQuestion(ICollection<Question> questionsToExclude, ICollection<Category> categories)

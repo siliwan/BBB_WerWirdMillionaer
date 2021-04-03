@@ -8,16 +8,42 @@
                 <h2>Loading...</h2>
             </div>
 
-            <div class="playing" v-if="!initialLoad && state == PlayState.Playing">
-                Display questions here
+            <div class="playing container border rounded p-5" v-if="!initialLoad && state == 'Playing'">
+                <div class="row">
+                    <h2>{{ currentQuestion.question.questionText }}</h2>
+                </div>
+                <div class="row ">
+                    <small>Answered correctly: {{ currentQuestion.percentCorrect }}% </small>
+                </div>
+                <div class="row mb-4">
+                    <small>Category: {{ currentQuestion.question.category.name }}</small>
+                </div>
+                <div class="row justify-content-around mb-4">       
+                    <div class="col mr-auto col-offset-2" v-for="answer in currentQuestion.question.answers.$values" :key="answer.id">
+                        <b-button variant="primary" @click="submitAnswer($event, answer)">{{ answer.answerText }}</b-button>
+                    </div>
+                </div>
+                <div class="row">
+                    <b-icon icon="stopwatch" shift-v="-4"></b-icon>&nbsp;<countdown :CountdownUntil="currentQuestion.timeLeftUntil" @onCompleted="timeUp"></countdown>
+                </div>
             </div>
 
-            <div class="playing" v-if="!initialLoad && state == PlayState.Won">
-                You have won!
+            <div class="won container border rounded p-5" v-if="!initialLoad && state == 'Won'">
+                <div class="row">
+                    <p>You have won!</p>
+                </div>
+                <div class="row">
+                    <b-button variant="primary" @click="reset">Reset</b-button>
+                </div>
             </div>
 
-            <div class="playing" v-if="!initialLoad && state == PlayState.Lost">
-                You have lost!
+            <div class="lost container border rounded p-5" v-if="!initialLoad && state == 'Lost'">
+                <div class="row">
+                    <p>You have lost!</p>
+                </div>
+                <div class="row">
+                    <b-button variant="primary" @click="reset">Reset</b-button>
+                </div>
             </div>
 
         </div>
@@ -25,20 +51,21 @@
 </template>
 
 <script lang="ts">
-    import { CurrentQuestion, nameof, PlayState } from '@/ResponseTypes';
+    import { Answer, CurrentQuestion, nameof, PlayState } from '@/ResponseTypes';
     import GameApi from '@/services/GameApi';
     import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
     import { NavigationGuardNext, Route } from 'vue-router';
+    import Countdown from '@/components/Game/Countdown.vue';
 
     @Component({
         components: {
-            
+            Countdown
         }
     })
     export default class Quiz extends Vue {
 
         private warningText: string = '';
-        public state = PlayState.Playing;
+        public state: PlayState = "Playing";
         private currentQuestion = new CurrentQuestion();
         private initialLoad = true;
 
@@ -53,7 +80,41 @@
         }
 
         async loadCurrentQuestion() {
-            this.currentQuestion = await GameApi.GetCurrentQuestion();;
+            try {
+                this.currentQuestion = await GameApi.GetCurrentQuestion();
+                console.log(this.currentQuestion)
+            } catch (error) {
+                this.reset();
+            }
+        }
+
+        public reset() {
+            this.$router.push('/quiz/start')
+        }
+
+        public async submitAnswer(evt: PointerEvent, answer: Answer) {
+
+            if(answer !== undefined) {
+                let result = await GameApi.SubmitAnswer(answer.id);
+
+                if(result.object == 'TimeUp' || result.object == 'Invalid') {
+                    //time is up?
+                    this.warningText = result.message;
+                } else if(result.object == 'Correct') {
+                    //Load next question!
+                    this.currentQuestion = await GameApi.GetCurrentQuestion();
+                } else if(result.object == 'Lost') {
+                    this.warningText = result.message;
+                    this.state = result.object;
+                } else {
+                    this.state = result.object;
+                }
+            }
+        }
+
+        public timeUp() {
+            alert("Time is up!")
+            this.reset();
         }
 
         async handleState() {
@@ -74,9 +135,8 @@
                                   next: NavigationGuardNext<Vue>) {
             let state = await GameApi.CurrentState();
             console.log(state)
-            console.log(state === PlayState.Menu)
-            //if(state != PlayState.Menu) next('start')
-            //else 
+            if(state != "Playing") next('/quiz/start')
+            else 
             next()
         }
 
