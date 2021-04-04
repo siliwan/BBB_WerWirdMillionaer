@@ -31,8 +31,17 @@ namespace Backend.Controllers
             this.userRepository = userRepository;
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route(nameof(Logout))]
+        public async Task Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+
         [HttpGet]
         [Authorize]
+        [Route(nameof(LoginInformation))]
         public ActionResult<SimpleUser> LoginInformation()
         {
             var UserIdString = User.Claims.Where(x => x.Type == USER_ID_CLAIM_TYPE)
@@ -52,6 +61,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [Route(nameof(Login))]
         public async Task<ActionResult> Login([FromBody] LoginModel loginModel)
         {
             if(!TryValidateModel(loginModel))

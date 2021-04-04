@@ -71,12 +71,16 @@ export class SubmissionResultWithMessage implements IReferencable {
 export class HighScore implements IReferencable {
   $id!: string;
   id!: number;
+  name!: string;
   timeStamp!: Date;
   pointsAchieved!: number;
   duration!: number;
   rank!: number;
   pointsWeighted!: number;
-  categories!: IReferencableArray<Reference<Category>>;
+  categories!: string;
+  get categoriesSeperated(): string[] {
+    return this.categories.split(',');
+  }
 }
 
 export class HighScoreResult implements IReferencableArray<HighScore> {
@@ -88,6 +92,11 @@ export class User implements IReferencable{
   $id!: string;
   id!: number;
   username!: string;
+}
+
+export class UserPassword {
+  username!: string;
+  password!: string;
 }
 
 export class ValidationErrorResponse {

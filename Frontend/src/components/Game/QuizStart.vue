@@ -1,10 +1,18 @@
 <template>
-    <div class="quizstart">
-        <h1>Quiz</h1>
-        <b-alert :show="warningText !== '' && warningText !== undefined" variant="danger" dismissible @dismissed="onDismiss()">{{warningText}}</b-alert>
-        <b-form-select v-model="selected" :options="options" multiple></b-form-select>
-        <b-btn @click="startGame()" variant="primary">Start Game</b-btn>
-    </div>
+    <b-container class="quizstart">
+        <b-row>
+            <b-alert :show="warningText !== '' && warningText !== undefined" variant="danger" dismissible @dismissed="onDismiss()">{{warningText}}</b-alert>
+        </b-row>
+        <b-row>
+            <p class="h1">Quiz</p>
+        </b-row>
+        <b-form-row class="mb-2">
+            <b-form-select v-model="selected" :options="options" multiple></b-form-select>
+        </b-form-row>
+        <b-form-row>
+            <b-btn @click="startGame()" variant="primary">Start Game</b-btn>
+        </b-form-row>
+    </b-container>
 </template>
 
 <script lang="ts">

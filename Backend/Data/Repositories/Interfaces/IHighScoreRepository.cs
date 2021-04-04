@@ -9,5 +9,6 @@ namespace Backend.Data.Repositories.Interfaces
     public interface IHighScoreRepository : IRepository<Highscore>
     {
         IEnumerable<VHighScore> GetHighscores();
+        void AddHighscore(string name, int pointsAchieved, int duration, IEnumerable<Category> categories);
     }
 }

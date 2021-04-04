@@ -15,6 +15,7 @@ namespace Backend.Services
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IGameSessionStorage storage;
         private readonly IQuestionRepository questionRepository;
+        private readonly IHighScoreRepository highScoreRepository;
 
         private string SessionId { 
             get {
@@ -29,11 +30,13 @@ namespace Backend.Services
 
         public GameSessionAcessor(IHttpContextAccessor httpContextAccessor,
                                   IGameSessionStorage storage,
-                                  IQuestionRepository questionRepository)
+                                  IQuestionRepository questionRepository,
+                                  IHighScoreRepository highScoreRepository)
         {
             this.httpContextAccessor = httpContextAccessor;
             this.storage = storage;
             this.questionRepository = questionRepository;
+            this.highScoreRepository = highScoreRepository;
         }
 
         public GameSession GetCurrentSession()
@@ -90,6 +93,12 @@ namespace Backend.Services
             var Session = GetCurrentSession();
             questionRepository.AnsweredWrong(Session.CurrentQuiz.CurrentQuestion);
             questionRepository.SaveChanges();
+        }
+
+        public void SubmitHighscore(string name)
+        {
+            var Session = GetCurrentSession();
+            highScoreRepository.AddHighscore(name, Session.CurrentQuiz.Points, Session.CurrentQuiz.DurationQuiz, Session.CurrentQuiz.SelectedCategories);
         }
     }
 

@@ -9,15 +9,28 @@ namespace Backend.Migrations
         {
             migrationBuilder.Sql(@"CREATE VIEW [dbo].[VHighScore] AS
                                         SELECT
-	                                        [Id],
-	                                        [Name],
-	                                        [TimeStamp],
-	                                        [PointsAchieved],
-	                                        [Duration],
-	                                        [PointsWeighted],
-	                                        RANK() OVER (ORDER BY PointsWeighted) AS [Rank]
-                                        FROM
-	                                        [dbo].[Highscores]");
+											[Id],
+											[Name],
+											[TimeStamp],
+											[PointsAchieved],
+											[Duration],
+											[PointsWeighted],
+											STUFF(
+												(SELECT 
+													',' + [dbo].[Categories].[Name]
+												 FROM
+													[dbo].[Categories]
+													INNER JOIN [dbo].[CategoryHighscore] ON [dbo].[Categories].[Id] = [dbo].[CategoryHighscore].[CategoriesId]
+												 WHERE
+													[dbo].[Highscores].[Id] = [dbo].[CategoryHighscore].[HighscoresId]
+												 FOR XML PATH ('')),
+												 1,
+												 1,
+												 ''
+											) AS [Categories],
+											RANK() OVER (ORDER BY PointsWeighted DESC) AS [Rank]
+										FROM
+											[dbo].[Highscores]");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

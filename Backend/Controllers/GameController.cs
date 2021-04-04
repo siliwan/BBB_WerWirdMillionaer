@@ -97,6 +97,34 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        public IActionResult CashIn()
+        {
+            if (!game.HasActiveSession() || Quiz.State != PlayState.Playing)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                Quiz.State = PlayState.Won;
+                return Ok();
+            }
+        }
+
+        [HttpPost]
+        public void SubmitHighscore([FromBody] string Name)
+        {
+            if (!game.HasActiveSession() || Quiz.State != PlayState.Won)
+            {
+                Unauthorized();
+            } else
+            {
+                game.SubmitHighscore(Name);
+                Quiz.State = PlayState.Menu;
+                Ok();
+            }
+        }
+
+        [HttpPost]
         public ActionResult<ObjectResponseWithMessage<SubmissionResult>> SubmitAnswer([FromBody] int answerId)
         {
             if (!game.HasActiveSession() || Quiz.State != PlayState.Playing)
@@ -126,6 +154,8 @@ namespace Backend.Controllers
             if (CorrectAnswer.Id == answerId)
             {
                 Quiz.Round++;
+                int TimeLeft = (int) Math.Round(ROUND_TIME_SEC - (DateTime.Now - Quiz.RoundStartedAt).TotalSeconds, MidpointRounding.AwayFromZero);
+                Quiz.DurationQuiz += TimeLeft >= 0 ? (int)Math.Round((DateTime.Now - Quiz.RoundStartedAt).TotalSeconds) : 0;
                 game.IncreaseWin();
                 Session.CurrentQuiz.QuestionsAnswered.Add(Session.CurrentQuiz.CurrentQuestion);
                 //Check if won else next round

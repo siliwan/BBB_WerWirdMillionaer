@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -60,7 +61,17 @@ namespace Backend
             });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
+                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opt =>
+                    {
+                        opt.Events = new CookieAuthenticationEvents
+                        {
+                            OnRedirectToLogin = ctx =>
+                            {
+                                ctx.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                                return Task.FromResult(0);
+                            }
+                        };
+                    });
             services.AddCors(options =>
             {
                 options.AddPolicy("CORS",

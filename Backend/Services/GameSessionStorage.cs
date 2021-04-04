@@ -40,6 +40,7 @@ namespace Backend.Services
                 CurrentQuestion = null,
                 HasJoker = true,
                 Round = 0,
+                DurationQuiz = 0,
                 QuestionsAnswered = new HashSet<Data.Models.Question>()
             };
 

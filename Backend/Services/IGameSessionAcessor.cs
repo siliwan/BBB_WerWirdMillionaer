@@ -17,5 +17,6 @@ namespace Backend.Services
         void GoToNextQuestion();
         void IncreaseWin();
         void IncreaseLost();
+        void SubmitHighscore(string name);
     }
 }

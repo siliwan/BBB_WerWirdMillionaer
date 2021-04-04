@@ -1,16 +1,17 @@
 <template>
-    <div class="home">
-        <h1>{{ msg }}</h1>
-        <p>Welcome to your new single-page application, built with <a href="https://vuejs.org" target="_blank">Vue.js</a> and <a href="http://www.typescriptlang.org/" target="_blank">TypeScript</a>.</p>
+    <div class="home container">
+        <p class="h1 text-center">Welcome to the "Wer Wird Millionär" Quiz</p>
         <b-table 
             striped 
             hover 
+            v-if="false"
             :items="categories" 
             isBusy="isLoading" 
             :fields="fields" 
             :select-mode="'single'"
             selectable
-            @row-selected="onRowSelected">
+            @row-selected="onRowSelected"
+            outlined>
         </b-table>
         <b-modal id="modal" ref="modal" :title="'Category'" @ok="onSubmit">
             <b-form>
@@ -23,7 +24,8 @@
                 </b-form-group>
             </b-form>
         </b-modal>
-        <router-link to="/quiz/start">Start</router-link>
+        <b-link class="btn btn-primary" to="/quiz/start">Start</b-link>
+        <b-link class="btn btn-primary" to="/highscores">Show highscores</b-link>
     </div>
 </template>
 
@@ -31,16 +33,13 @@
     import { Category, HighScore, nameof, typedUnitialized } from '@/ResponseTypes';
     import { BModal, BNavForm, BvModal, BvModalEvent } from 'bootstrap-vue';
     import { Component, Prop, Vue } from 'vue-property-decorator';
-    import ApiExplorer from "./ApiExplorer.vue";
     import CategoryCrud from "./CRUD/CategoryCrud"
 
     @Component({
         components: {
-            ApiExplorer
         }
     })
     export default class Home extends Vue {
-        @Prop() private msg!: string;
         private categories: Category[] = [];
         private selected: Category = new Category();
         private fields = [

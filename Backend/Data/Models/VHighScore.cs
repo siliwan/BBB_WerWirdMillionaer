@@ -8,13 +8,14 @@ namespace Backend.Data.Models
     public class VHighScore
     {
         public int Id { get; set; }
+        public string Name { get; set; }
         public DateTime TimeStamp { get; set; }
         public int PointsAchieved { get; set; }
-        public long Duration { get; set; }
+        public int Duration { get; set; }
         
-        public int Rank { get; }
-        public float PointsWeighted { get; }
+        public long Rank { get; private set; }
+        public int PointsWeighted { get; private set; }
 
-        public ICollection<Category> Categories { get; set; } = new HashSet<Category>();
+        public string Categories { get; set; }
     }
 }

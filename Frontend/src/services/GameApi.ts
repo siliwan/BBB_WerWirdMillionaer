@@ -29,6 +29,20 @@ class GameApi {
         });
     }
 
+    async SubmitHighscore(name: string): Promise<void> {
+        await request.post<void>(`${this.endpoint}/SubmitHighscore`, 
+        JSON.stringify(name),
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
+    async CashIn(): Promise<void> {
+        await request.post<void>(`${this.endpoint}/CashIn`);
+    }
+
     async SubmitAnswer(answerId: number): Promise<SubmissionResultWithMessage> {
         const res = await request.post<SubmissionResultWithMessage>(`${this.endpoint}/SubmitAnswer`, JSON.stringify(answerId),
         {
