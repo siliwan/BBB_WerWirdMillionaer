@@ -2,39 +2,58 @@
     <div class="quiz">
         <div class="container">
             <b-row>
-                <b-alert :show="warningText !== '' && warningText !== undefined" variant="danger" dismissible @dismissed="onDismiss()">{{warningText}}</b-alert>
+                <b-col>
+                    <b-alert :show="warningText !== '' && warningText !== undefined" variant="danger" dismissible @dismissed="onDismiss()">{{warningText}}</b-alert>
+                </b-col>
             </b-row>
 
             <b-row class="loading" v-if="initialLoad">
-                <p class="h2">Loading...</p>
+                <b-col>
+                    <p class="h2">Loading...</p>
+                </b-col>
             </b-row>
 
-            <b-container class="playing border rounded p-5" v-if="!initialLoad && state == 'Playing'">
+            <b-container class="playing border rounded pt-2 pb-2 pl-5 pr-5" v-if="!initialLoad && state == 'Playing'">
                 <b-row>
-                    <p class="h2">
-                        {{ currentQuestion.question.questionText }}
-                    </p>
-                </b-row>
-                <b-row>
-                    <p class="small">
-                        Answered correctly: {{ currentQuestion.percentCorrect }}%
-                    </p>
-                </b-row>
-                <b-row class="mb-4">
-                    <p class="small">
-                        Category: {{ currentQuestion.question.category.name }}
-                    </p>
-                </b-row>
-                <b-row class="justify-content-around mb-4">
-                    <b-col class="mr-auto col-offset-2 mb-2" cols="6" v-for="answer in currentQuestion.question.answers.$values" :key="answer.id">
-                        <b-button class="wwm-btn" variant="primary" @click="submitAnswer($event, answer)">{{ answer.answerText }}</b-button>
+                    <b-col cols="3">
+                        <b-button-group>
+                            <b-button variant="primary" @click="cashIn">Cash In</b-button>
+                            <b-button variant="primary" :disabled="!hasJoker" @click="useJoker">Use Joker</b-button>
+                        </b-button-group>
                     </b-col>
                 </b-row>
-                <b-row>
-                    <b-icon icon="stopwatch" shift-v="-4"></b-icon>&nbsp;<countdown :CountdownUntil="currentQuestion.timeLeftUntil" @onCompleted="timeUp"></countdown>
+                <b-row class="mb-1">
+                    <b-col>
+                        <b-img width="200%" height="200%" src="@/assets/images/WWM.png" fluid center rounded="circle" alt="Who wants to be a millionaire" />
+                    </b-col>
                 </b-row>
+                <b-row class="mb-2">
+                    <b-col class="wwm p-2">
+                        <p class="h2 text-center">
+                                {{ currentQuestion.question.questionText }}
+                        </p>
+                    </b-col>
+                </b-row>
+                <b-row class="mb-4">
+                    <b-col class="mr-auto col-offset-2 mb-2" cols="6" v-for="answer in currentQuestion.question.answers.$values" :key="answer.id">
+                        <b-button class="wwm btn text-center text-wrap" @click="submitAnswer($event, answer)">{{ answer.answerText }}</b-button>
+                    </b-col>
+                </b-row>
+                <hr />
                 <b-row>
-                    <b-button variant="primary" @click="cashIn">Cash In</b-button>
+                    <b-col>
+                        <countdown class="text-center" :CountdownUntil="currentQuestion.timeLeftUntil" @onCompleted="timeUp"><b-icon class="mr-1" icon="stopwatch" shift-v="0" /></countdown>
+                    </b-col>
+                    <b-col>
+                        <p class="small text-center">
+                            Answered correctly: {{ currentQuestion.percentCorrect }}%
+                        </p>
+                    </b-col>
+                    <b-col>
+                        <p class="small text-center">
+                            Category: {{ currentQuestion.question.category.name }}
+                        </p>
+                    </b-col>
                 </b-row>
             </b-container>
 
@@ -89,6 +108,7 @@
         private currentQuestion = new CurrentQuestion();
         private initialLoad = true;
         private highscoreName = '';
+        private hasJoker: boolean = false;
 
         constructor() {
             super();
@@ -97,13 +117,13 @@
         async mounted() {
             this.handleState();
             await this.loadCurrentQuestion()
+            this.hasJoker = await GameApi.HasJoker();
             this.initialLoad = false;
         }
 
         async loadCurrentQuestion() {
             try {
                 this.currentQuestion = await GameApi.GetCurrentQuestion();
-                console.log(this.currentQuestion)
             } catch (error) {
                 this.reset();
             }
@@ -130,6 +150,14 @@
                 } else {
                     this.state = result.object;
                 }
+            }
+        }
+
+        async useJoker() {
+            if(this.hasJoker) {
+                await GameApi.UseJoker();
+                this.hasJoker = false;
+                this.loadCurrentQuestion();      
             }
         }
 
@@ -170,7 +198,6 @@
                                   from: Route, 
                                   next: NavigationGuardNext<Vue>) {
             let state = await GameApi.CurrentState();
-            console.log(state)
             if(state != "Playing") next('/quiz/start')
             else 
             next()
@@ -180,18 +207,35 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="sass" scoped>
-    .wwm-btn {
-        width: 100%;
+<style lang="scss" scoped>
+    @import '~bootstrap/scss/bootstrap.scss';
+    $wwm-col: rgb(0, 3, 190);
+    $wwm-col-hover: darken($wwm-col, 10);
 
-        :after {
-            content: "";
-            display: inline-block;
-            width: 0;
-            height: 0;
-            border-top: 20px solid rgb(0, 0, 0);
-            border-bottom: 20px solid rgb(0, 0, 0);
-            border-left: 20px solid red;
+    .wwm {
+        color: #fff;
+
+        &.btn, >.btn {
+            padding-left: 30%;
+            padding-right: 30%;
+            width: 100%;
+            background-color: $wwm-col;
+            border: none;
+            white-space: normal;
+            &:hover {
+                background-color: $wwm-col-hover;
+            }
         }
+
+        &p, >p {
+            width: 30%; 
+            margin: 0 auto;
+        }
+
+        background-color: $wwm-col;
+
+        -webkit-clip-path: polygon(25% 0%, 75% 0%, 80% 50%, 75% 100%, 25% 100%, 20% 50%);
+        clip-path: polygon(25% 0%, 75% 0%, 80% 50%, 75% 100%, 25% 100%, 20% 50%);
+
     }
 </style>

@@ -1,5 +1,5 @@
 import { Category, IReferencableArray } from '@/ResponseTypes';
-import { request, sessionId } from '@/services/Request';
+import { request } from '@/services/Request';
 
 export class CategoryCrud  {
     endpoint: string;
@@ -16,7 +16,11 @@ export class CategoryCrud  {
         return res.data;
     }
     async create(categoryName: string) {
-        let res = await request.post(this.endpoint, categoryName);
+        let res = await request.post(this.endpoint, JSON.stringify(categoryName), {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         return res;
     }
     async update(id: number, newCategoryName: string) {

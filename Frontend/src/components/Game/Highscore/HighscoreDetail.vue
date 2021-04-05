@@ -82,6 +82,7 @@
             if(confirm('Do you really want to delete this highscore?')) {
                 try {
                     await HighscoreCrud.delete(this.highscore.id);
+                    this.$router.push('/')
                 } catch (error) {
                     this.warning = "Could not delete the entry.";
                 }

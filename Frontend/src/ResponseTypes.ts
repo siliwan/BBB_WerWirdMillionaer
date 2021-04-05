@@ -21,7 +21,9 @@ export class Question implements IReferencable {
     $id!: string;
     id!: number;
     questionText!: string;
-    questionStatistic!: QuestionStatistic
+    questionStatistic!: QuestionStatistic;
+    answers!: IReferencableArray<Answer>;
+    category!: Category;
 }
 
 export class QuestionStatistic implements IReferencable {

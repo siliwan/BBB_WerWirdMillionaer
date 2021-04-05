@@ -1,32 +1,21 @@
 <template>
-    <div class="home container">
-        <p class="h1 text-center">Welcome to the "Wer Wird Millionär" Quiz</p>
-        <b-table 
-            striped 
-            hover 
-            v-if="false"
-            :items="categories" 
-            isBusy="isLoading" 
-            :fields="fields" 
-            :select-mode="'single'"
-            selectable
-            @row-selected="onRowSelected"
-            outlined>
-        </b-table>
-        <b-modal id="modal" ref="modal" :title="'Category'" @ok="onSubmit">
-            <b-form>
-                <b-form-group>
-                    <label for="inputName">Category name</label>
-                    <b-form-input :state="state" id="inputName" v-model="selected.name" />
-                </b-form-group>
-                <b-form-group>
-                    <b-btn variant="danger" @click="onDelete">Delete</b-btn>
-                </b-form-group>
-            </b-form>
-        </b-modal>
-        <b-link class="btn btn-primary" to="/quiz/start">Start</b-link>
-        <b-link class="btn btn-primary" to="/highscores">Show highscores</b-link>
-    </div>
+    <b-container class="home container">
+        <b-row>
+            <b-col>
+                <p class="h1 text-center">Welcome to the "Wer Wird Millionär" Quiz</p>
+            </b-col>
+        </b-row>
+        <b-row class="mb-1">
+            <b-col>
+                <b-img width="200%" height="200%" src="@/assets/images/WWM.png" fluid center rounded="circle" alt="Who wants to be a millionaire" />
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col class="text-center">
+                <b-link class="btn btn-primary" to="/quiz/start" size="lg" block>Start Quiz</b-link>
+            </b-col>
+        </b-row>
+    </b-container>
 </template>
 
 <script lang="ts"> 

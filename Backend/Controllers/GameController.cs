@@ -24,7 +24,7 @@ namespace Backend.Controllers
         private readonly ILogger<GameController> logger;
         private readonly IGameSessionAcessor game;
 
-        private const int ROUND_TIME_SEC = 30;
+        private const int ROUND_TIME_SEC = 30 * 100;
 
         private GameSession _session { get; set; }
         private GameSession Session { 
@@ -67,6 +67,7 @@ namespace Backend.Controllers
             if(Quiz.HasJoker)
             {
                 Quiz.HasJoker = false;
+                Quiz.JokerUsedThisRound = true;
                 return Ok();
             } else
             {
@@ -154,6 +155,7 @@ namespace Backend.Controllers
             if (CorrectAnswer.Id == answerId)
             {
                 Quiz.Round++;
+                Quiz.JokerUsedThisRound = false;
                 int TimeLeft = (int) Math.Round(ROUND_TIME_SEC - (DateTime.Now - Quiz.RoundStartedAt).TotalSeconds, MidpointRounding.AwayFromZero);
                 Quiz.DurationQuiz += TimeLeft >= 0 ? (int)Math.Round((DateTime.Now - Quiz.RoundStartedAt).TotalSeconds) : 0;
                 game.IncreaseWin();
@@ -203,6 +205,24 @@ namespace Backend.Controllers
                                     .Ceiling(DateTimeRoundLevel.Miliseconds))
             {
                 Quiz.State = PlayState.Lost;
+            }
+
+            if(Quiz.JokerUsedThisRound)
+            {
+                var CorrectAnswer = CurrentQuestion.Answers.Where(a => a.IsCorrect);
+                var OneWrongAnswerWithOneCorrectAnswer = CurrentQuestion.Answers.Where(a => !a.IsCorrect)
+                                                                                .Take(1)
+                                                                                .Concat(CorrectAnswer);
+                var QuestionModified = CurrentQuestion;
+                CurrentQuestion.Answers = OneWrongAnswerWithOneCorrectAnswer.ToList();
+                return new CurrentQuestion
+                {
+                    Question = QuestionModified,
+                    PercentCorrect = CalculatePercentageCorrect(CurrentQuestion),
+                    TimeLeftUntil = Quiz.RoundStartedAt
+                                    .AddSeconds(ROUND_TIME_SEC)
+                                    .Ceiling(DateTimeRoundLevel.Miliseconds)
+                };
             }
 
             return new CurrentQuestion

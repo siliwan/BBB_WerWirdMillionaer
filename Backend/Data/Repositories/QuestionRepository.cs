@@ -43,8 +43,11 @@ namespace Backend.Data.Repositories
 
         public void AddQuestion(string questionText, Category category, IEnumerable<(string Answer, bool IsCorrect)> answers)
         {
-            if (answers.Count() != MAX_QUESTIONS) throw new ArgumentException($"Only {MAX_QUESTIONS} questions are allowed, but received {answers.Count()}!");
-            if (answers.Count(answers => answers.IsCorrect) != MAX_CORRECT_QUESTIONS) throw new ArgumentException($"Only {MAX_CORRECT_QUESTIONS} correct questions are allowed, but received {answers.Count(answers => answers.IsCorrect)}!");
+            if (questionText == null) throw new ArgumentException($"The question text must not be null!", nameof(questionText));
+            if (category == null) throw new ArgumentException($"The category must not be null!", nameof(category));
+            if (answers.Count() != MAX_QUESTIONS) throw new ArgumentException($"Only {MAX_QUESTIONS} questions are allowed, but received {answers.Count()}!", nameof(answers));
+            if (answers.Count(answers => answers.IsCorrect) != MAX_CORRECT_QUESTIONS) throw new ArgumentException($"Only {MAX_CORRECT_QUESTIONS} correct questions are allowed, but received {answers.Count(answers => answers.IsCorrect)}!", nameof(answers));
+            if (answers.Any(answers => answers.Answer == null)) throw new ArgumentException($"All answer texts must not be null!", nameof(answers));
 
             var question = new Question
             {
@@ -56,12 +59,14 @@ namespace Backend.Data.Repositories
 
             Add(question);
 
-            _context.Set<Answer>().AddRange(answers.Select(answer => new Answer
+            var AnswersToAdd = answers.Select(answer => new Answer
             {
                 AnswerText = answer.Answer,
                 IsCorrect = answer.IsCorrect,
                 Question = question
-            }));
+            });
+
+            _context.Set<Answer>().AddRange(AnswersToAdd);
         }
 
         public void AnsweredCorrect(Question question)
@@ -90,6 +95,16 @@ namespace Backend.Data.Repositories
                            .Where(q => !QuestionKeys.Contains(q.Id))
                            .OrderBy(o => Guid.NewGuid())
                            .FirstOrDefault();
+        }
+
+        public new void Remove(Question entity)
+        {
+            _context.Set<Question>().Remove(entity);
+        }
+
+        public new void RemoveRange(IEnumerable<Question> entities)
+        {
+            _context.Set<Question>().RemoveRange(entities);
         }
     }
 }

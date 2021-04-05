@@ -15,6 +15,7 @@ namespace Backend.Data.Models.GameSessions
         public ICollection<Question> QuestionsAnswered { get; set; }
         public DateTime RoundStartedAt { get; set; }
         public Question CurrentQuestion { get; set; }
+        public bool JokerUsedThisRound { get; set; }
         public GameSession Session { get; set; }
         public PlayState State { get; set; }
     }

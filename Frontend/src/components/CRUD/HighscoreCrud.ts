@@ -19,7 +19,7 @@ export class HighscoreCrud {
     }
 
     async delete(id: number): Promise<void> {
-        await request.get<HighScoreResult>(`${this.endpoint}/${id}`);
+        await request.delete<HighScoreResult>(`${this.endpoint}/${id}`);
     }
 }
 

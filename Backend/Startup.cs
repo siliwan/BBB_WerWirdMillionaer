@@ -94,7 +94,14 @@ namespace Backend
                               DatabaseContext ctx)
         {
             ctx.Database.EnsureCreated();
-            ctx.Database.Migrate();
+
+            try
+            {
+                ctx.Database.Migrate();
+            }
+            catch (Exception e)
+            {
+            }
 
             if (env.IsDevelopment())
             {

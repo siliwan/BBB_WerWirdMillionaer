@@ -74,7 +74,7 @@ namespace Backend.Controllers
 
             var Answer = answerRepository.GetById(id);
 
-            if(Answer != null)
+            if(Answer == null)
             {
                 return BadRequest($"Answer with id {id} does not exist.");
             }

@@ -42,7 +42,8 @@
 
             if(categories == null) return;
 
-            this.options = categories.map(cat => {return { value: cat, text: cat.name }});
+            this.options = categories.filter(cat => cat.questions?.$values?.length ?? 0 > 0)
+                                     .map(cat => {return { value: cat, text: cat.name }});
         }
 
         public onDismiss() {

@@ -1,6 +1,6 @@
 <template>
     <div class="timer">
-      <p>{{ minutes }}:{{ seconds }}</p>
+      <span><slot></slot>{{ minutes }}:{{ seconds }}</span>
     </div>
 </template>
 <script lang="ts">

@@ -34,7 +34,8 @@ namespace Backend.Data
             modelBuilder.Entity<Question>()
                         .HasOne(q => q.QuestionStatistic)
                         .WithOne(qs => qs.Question)
-                        .HasForeignKey<QuestionStatistic>(qs => qs.QuestionId);
+                        .HasForeignKey<QuestionStatistic>(qs => qs.QuestionId)
+                        .IsRequired();
 
             modelBuilder.Entity<Highscore>()
                         .Property(h => h.PointsWeighted)
@@ -48,6 +49,11 @@ namespace Backend.Data
                         eb.ToView(nameof(VHighScore));
                     }
                 );
+
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Cascade;
+            }
         }
         
     }

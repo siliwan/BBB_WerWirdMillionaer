@@ -162,12 +162,6 @@ namespace Backend.Migrations
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Rank")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PointsWeighted")
-                        .HasColumnType("int");
-
                     b.ToView("VHighScore");
                 });
 

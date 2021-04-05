@@ -34,7 +34,14 @@ namespace Backend.Controllers
         [HttpGet]
         public IEnumerable<Question> Get()
         {
-            return questionRepository.GetAll();
+            var questions = questionRepository.GetAll().ToList();
+            questions.ForEach(q =>
+            {
+                q.Category.Questions = new List<Question>();
+                q.Category.Highscores = new List<Highscore>();
+            });
+
+            return questions;
         }
 
         // GET api/<QuestionController>/5
@@ -44,6 +51,8 @@ namespace Backend.Controllers
             var QuestionToReturn = questionRepository.GetById(id);
             if(QuestionToReturn != null)
             {
+                QuestionToReturn.Category.Questions = new List<Question>();
+                QuestionToReturn.Category.Highscores = new List<Highscore>();
                 return QuestionToReturn;
             } else
             {
@@ -88,19 +97,29 @@ namespace Backend.Controllers
 
         // PUT api/<QuestionController>/5
         [HttpPut("{id}")]
-        public async Task Put(int id, [FromBody] string questionText)
+        public async Task Put(int id, [FromBody] QuestionSimple question)
         {
             var QuestionToModify = questionRepository.GetById(id);
+            var Category = categoryRepository.GetById(question.CategoryId);
 
-            if(QuestionToModify != null)
+            if(Category == null)
             {
-                QuestionToModify.QuestionText = questionText;
-                await questionRepository.SaveChangesAsync();
-                NoContent();
+                BadRequest($"Category with id {question.CategoryId} does not exist.");
             } else
             {
-                BadRequest($"Question with id {id} does not exist.");
+                if (QuestionToModify != null)
+                {
+                    QuestionToModify.QuestionText = question.QuestionText;
+                    QuestionToModify.Category = Category;
+                    await questionRepository.SaveChangesAsync();
+                    NoContent();
+                }
+                else
+                {
+                    BadRequest($"Question with id {id} does not exist.");
+                }
             }
+
         }
 
         // DELETE api/<QuestionController>/5

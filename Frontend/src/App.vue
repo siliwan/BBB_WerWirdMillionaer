@@ -8,12 +8,16 @@
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>
                     <b-nav-item to="/">Home</b-nav-item>
+                    <b-nav-item to="/highscores">Highscores</b-nav-item>
+                    <b-nav-item v-if="isAuthenticated" to="/questions">Questions</b-nav-item>
+                    <b-nav-item v-if="isAuthenticated" to="/categories">Categories</b-nav-item>
                 </b-navbar-nav>
                 <b-navbar-nav class="ml-auto">
                     <b-button variant="danger" @click="onClear">Clear storage</b-button>
-                    <b-nav-item to="/profile/login">Login</b-nav-item>
-                    <b-nav-item-dropdown v-if="isAuthenticated" :text="user.username" right>
-                        <b-dropdown-item href="#" @click="onLogout">Logout</b-dropdown-item>
+                    <b-nav-item v-if="!isAuthenticated" to="/profile/login">Login</b-nav-item>
+                    <b-nav-item-dropdown v-if="isAuthenticated" :text="user.username != undefined ? user.username : '{{ user }}'" right>
+                        <b-dropdown-item to="/profile">Profile</b-dropdown-item>
+                        <b-dropdown-item @click="onLogout">Logout</b-dropdown-item>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
             </b-collapse>
@@ -52,15 +56,19 @@
         }
 
         async onLogout() {
-            if(await AuthApi.IsLoggedIn()) {
-                await AuthApi.Logout();
+            try {
+                if(await AuthApi.IsLoggedIn()) {
+                    await AuthApi.Logout();
+                    this.user = new User();
+                } 
+            } finally {
+                window.location.reload();
             }
         }
 
         get breadcrumb() {
             console.log(this.$route.fullPath)
             return this.$route.fullPath.split('/').map((fragment, index, arr) => {
-                console.log(`${fragment} => ${arr.slice(0, index+1)}`)
                 return {
                     text: index == 0 ? 'Home' : fragment,
                     href: index == 0 ? '/' : arr.slice(0, index + 1).join('/'),
@@ -70,12 +78,16 @@
         }
 
         get isAuthenticated() {
-            return this.user.id != undefined;
+            return this.user.id !== undefined;
         }
 
         @Watch(nameof<App>('$route'))
-        onRouteChanged(to: any, from: any) {
+        async onRouteChanged(to: any, from: any) {
             console.log("Route changed to " + to.path)
+            if(to.path === '/profile' && await AuthApi.IsLoggedIn()) {
+                this.user = await AuthApi.LoginInformation()
+            }
+
             const toDepth = to.path.split('/').length
             const fromDepth = from.path.split('/').length
             this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'

@@ -6,18 +6,6 @@ namespace Backend.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Categories_Highscores_HighscoreId",
-                table: "Categories");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Categories_HighscoreId",
-                table: "Categories");
-
-            migrationBuilder.DropColumn(
-                name: "HighscoreId",
-                table: "Categories");
-
             migrationBuilder.CreateTable(
                 name: "CategoryHighscore",
                 columns: table => new
