@@ -181,7 +181,7 @@ import { NavigationGuardNext, Route } from "node_modules/vue-router/types/router
                 await CategoryCrud.delete(this.selected.id);
                 this.selected = new Category();
                 
-                this.$bvToast.toast(`Category "${deletedCategoryName}" as been deleted successfully!`, {
+                this.$bvToast.toast(`Category "${deletedCategoryName}" has been deleted successfully!`, {
                     variant: 'success',
                     title: 'Success',
                     solid: true
