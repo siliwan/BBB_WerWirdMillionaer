@@ -83,8 +83,8 @@
 
     //@ts-ignore Import works just fine
     import { BFormInput } from "node_modules/bootstrap-vue/src";
-import { NavigationGuardNext, Route } from "node_modules/vue-router/types/router";
-import AuthApi from "@/services/AuthApi";
+    import { NavigationGuardNext, Route } from "node_modules/vue-router/types/router";
+    import AuthApi from "@/services/AuthApi";
 
     type crudMethod = 'new' | 'edit' | 'invalid';
 
