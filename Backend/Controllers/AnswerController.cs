@@ -27,7 +27,7 @@ namespace Backend.Controllers
             this.questionRepository = questionRepository;
         }
 
-        // GET: api/<AnswerController>
+        // GET api/<AnswerController>
         [HttpGet]
         public IEnumerable<Answer> Get()
         {
