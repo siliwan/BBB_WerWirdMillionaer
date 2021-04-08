@@ -214,7 +214,6 @@
                 await QuestionCrud.put(this.model.id, this.model.category.id, this.model.questionText)
 
                 //Step 2: Save answers
-
                 for (let i = 0; i < this.model.answers.$values.length; i++) {
                     const answer = this.model.answers.$values[i];
                     await AnswerCrud.update(answer.id, answer.answerText, answer.isCorrect);
