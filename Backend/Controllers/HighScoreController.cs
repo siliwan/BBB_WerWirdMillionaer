@@ -26,7 +26,7 @@ namespace Backend.Controllers
             this.highScoreRepositoy = highScoreRepositoy;
         }
 
-        // GET: api/<HighScoreController>
+        // GET api/<HighScoreController>
         [HttpGet]
         public IEnumerable<VHighScore> Get()
         {
