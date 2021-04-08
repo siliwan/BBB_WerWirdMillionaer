@@ -171,7 +171,16 @@
             if(this.highscoreName === undefined || this.highscoreName.trim() === '') {
                 this.warningText = "You must provide a name for it to be seen in the highscores!"
             } else {
-                await GameApi.SubmitHighscore(this.highscoreName);
+                try {
+                    await GameApi.SubmitHighscore(this.highscoreName);
+                    this.reset();
+                } catch (error) {
+                    this.$bvToast.toast("Could not submit highscore!", {
+                        title: 'Error',
+                        variant: 'danger',
+                        solid: true
+                    });
+                }
             }
 
         }

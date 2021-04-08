@@ -1,6 +1,7 @@
 <template>
     <div class="highscoreList container">
         <b-table 
+            id="highscoreListTable"
             striped 
             hover 
             outlined
@@ -10,8 +11,15 @@
             :fields="fields"
             :select-mode="'single'"
             selectable
+            :per-page="perPage"
+            :current-page="currentPage"
             @row-selected="onRowSelected">
         </b-table>
+        <b-pagination
+        v-model="currentPage"
+        :total-rows="highscores.length"
+        :per-page="perPage"
+        aria-controls="highscoreListTable" />
     </div>
 </template>
 <script lang="ts">
@@ -30,11 +38,14 @@
         private highscores: HighScore[] = [];
         private isLoading: boolean = true;
 
+        private currentPage: number = 0;
+        private perPage: number = 10;
+
         private fields = [
-            { key: nameof<HighScore>("rank"), label: nameof<HighScore>("rank"), sortable: true },
-            { key: nameof<HighScore>("name"), label: nameof<HighScore>("name") },
-            { key: nameof<HighScore>("pointsWeighted"), label: "points", sortable: true },
-            { key: nameof<HighScore>("categories"), label: nameof<HighScore>("categories"), formatter: this.onCategoriesFormat },
+            { key: nameof<HighScore>("rank"), label: "Rank", sortable: true },
+            { key: nameof<HighScore>("name"), label: "Name" },
+            { key: nameof<HighScore>("pointsWeighted"), label: "Score", sortable: true },
+            { key: nameof<HighScore>("categories"), label: "Categories", formatter: this.onCategoriesFormat },
         ]
 
         constructor() {

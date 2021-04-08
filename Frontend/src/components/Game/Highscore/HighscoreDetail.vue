@@ -17,10 +17,13 @@
             </div>
             <div class="row">
                 <div class="col">
-                    Points: {{ highscore.pointsWeighted }}
+                    Score: {{ highscore.pointsWeighted }}
                 </div>
                 <div class="col">
                     Duration: {{ durationFormatted }}
+                </div>
+                <div class="col">
+                    Categories: {{ CategoriesFormatted }}
                 </div>
             </div>
             <div class="row" v-if="isAuthenticated">
@@ -82,7 +85,7 @@
             if(confirm('Do you really want to delete this highscore?')) {
                 try {
                     await HighscoreCrud.delete(this.highscore.id);
-                    this.$router.push('/')
+                    this.$router.push('/highscores')
                 } catch (error) {
                     this.warning = "Could not delete the entry.";
                 }
@@ -113,11 +116,16 @@
             if(this.highscore.id !== undefined) {
                 let time = new Date(0);
                 time.setSeconds(this.highscore.duration);
-                console.log(time)
                 return `${time.getMinutes().toString()}m ${time.getSeconds().toString()}s`;
             }
 
             return "0m 0s";
+        }
+
+        get CategoriesFormatted() {
+            if(this.highscore.categories !== undefined) {
+                return this.highscore.categories.split(',').join(', ')
+            }
         }
 
         get hasWarning() {

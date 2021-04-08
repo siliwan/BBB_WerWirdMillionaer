@@ -13,7 +13,7 @@
                     <b-nav-item v-if="isAuthenticated" to="/categories">Categories</b-nav-item>
                 </b-navbar-nav>
                 <b-navbar-nav class="ml-auto">
-                    <b-button variant="danger" @click="onClear">Clear storage</b-button>
+                    <b-button variant="danger" v-if="showClearStorage" @click="onClear">Clear storage</b-button>
                     <b-nav-item v-if="!isAuthenticated" to="/profile/login">Login</b-nav-item>
                     <b-nav-item-dropdown v-if="isAuthenticated" :text="user.username != undefined ? user.username : '{{ user }}'" right>
                         <b-dropdown-item to="/profile">Profile</b-dropdown-item>
@@ -79,6 +79,10 @@
 
         get isAuthenticated() {
             return this.user.id !== undefined;
+        }
+
+        get showClearStorage() {
+            return localStorage.getItem('debug')?.trim() ?? 'false' !== 'false';
         }
 
         @Watch(nameof<App>('$route'))

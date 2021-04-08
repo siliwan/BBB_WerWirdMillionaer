@@ -15,7 +15,7 @@
                         </b-col>
                     </b-form-row>
                     <b-form-row>
-                        <b-col cols="4">
+                        <b-col cols="12" lg="4" order="2" order-lg="1">
                             <b-form-group label="Answers">
                                 <b-col>
                                     <b-form-group label="Answer 1" label-for="model_answers_1">
@@ -51,12 +51,12 @@
                                 </b-col>
                             </b-form-group>
                         </b-col>
-                        <b-col cols="8">
+                        <b-col cols="12" lg="8" order="1" order-lg="2">
                             <b-form-group label="Question Text" label-for="model_questionText">
                                 <b-form-textarea id="model_questionText" v-model="model.questionText" required/>
                             </b-form-group>
                         </b-col>
-                        <b-col cols="12">
+                        <b-col cols="12" order="3">
                             <b-form-group label="Category" label-for="model_category">
                                 <b-form-select id="model_category" v-model="categorySelection" :options="categoryOptions" required/>
                             </b-form-group>

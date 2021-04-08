@@ -23,7 +23,7 @@ namespace Backend
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
-                              .UseContentRoot(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                              .UseContentRoot(AppContext.BaseDirectory);
                 });
     }
 }

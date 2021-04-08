@@ -1,13 +1,14 @@
-const host = "localhost"
-const port = 44313
-const apiPath = "/api"
-
 import axios from "axios";
+import Settings from "@/Settings";
 
 export let sessionId = localStorage.getItem("x-quiz-session-id") || undefined;
 
-export const request = (() => { let instance = axios.create({
-    baseURL: `https://${host}:${port}${apiPath}`,
+export let request = (() => { 
+
+let baseUrl = `${Settings.protocol}://${Settings.hostname}:${Settings.port}${Settings.apiEndpoint}`
+
+let instance = axios.create({
+    baseURL: baseUrl,
     headers: {
         'x-quiz-session-id': sessionId
     },
