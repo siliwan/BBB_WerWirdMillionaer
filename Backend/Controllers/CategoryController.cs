@@ -26,7 +26,7 @@ namespace Backend.Controllers
             this.categoryRepository = categoryRepository;
         }
 
-        // GET: api/<CategoryController>
+        // GET api/<CategoryController>
         [HttpGet]
         public IEnumerable<Category> Get()
         {
