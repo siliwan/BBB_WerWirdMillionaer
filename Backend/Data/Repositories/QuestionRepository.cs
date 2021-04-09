@@ -49,6 +49,8 @@ namespace Backend.Data.Repositories
             if (answers.Count(answers => answers.IsCorrect) != MAX_CORRECT_QUESTIONS) throw new ArgumentException($"Only {MAX_CORRECT_QUESTIONS} correct questions are allowed, but received {answers.Count(answers => answers.IsCorrect)}!", nameof(answers));
             if (answers.Any(answers => answers.Answer == null)) throw new ArgumentException($"All answer texts must not be null!", nameof(answers));
 
+            _context.Database.BeginTransaction();
+
             var question = new Question
             {
                 QuestionText = questionText,
@@ -67,6 +69,8 @@ namespace Backend.Data.Repositories
             });
 
             _context.Set<Answer>().AddRange(AnswersToAdd);
+
+            _context.Database.CommitTransaction();
         }
 
         public void AnsweredCorrect(Question question)
