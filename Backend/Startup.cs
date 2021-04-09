@@ -1,4 +1,5 @@
 using Backend.Data;
+using Backend.Data.Models.Config;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +38,7 @@ namespace Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<QuizSettings>(Configuration.GetSection(QuizSettings.ConfigPath));
             services.AddControllers()
                     .AddJsonOptions(opt =>
                     {

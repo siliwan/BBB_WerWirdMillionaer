@@ -12,6 +12,8 @@ using Backend.Data.Models;
 using Backend.Tools;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Authorization;
+using Backend.Data.Models.Config;
+using Microsoft.Extensions.Options;
 
 namespace Backend.Controllers
 {
@@ -23,8 +25,7 @@ namespace Backend.Controllers
     {
         private readonly ILogger<GameController> logger;
         private readonly IGameSessionAcessor game;
-
-        private const int ROUND_TIME_SEC = 30 * 100;
+        private readonly QuizSettings quizSettings;
 
         private GameSession _session { get; set; }
         private GameSession Session { 
@@ -39,10 +40,12 @@ namespace Backend.Controllers
         private Quiz Quiz { get { return Session.CurrentQuiz; } }
 
         public GameController(ILogger<GameController> logger,
-                              IGameSessionAcessor game)
+                              IGameSessionAcessor game,
+                              IOptionsSnapshot<QuizSettings> quizSettings)
         {
             this.logger = logger;
             this.game = game;
+            this.quizSettings = quizSettings.Value;
         }
 
         [HttpGet]
@@ -79,7 +82,7 @@ namespace Backend.Controllers
         public ActionResult<PlayState> CurrentState()
         {
             if (game.HasActiveSession() && DateTime.Now >= Quiz.RoundStartedAt
-                                                               .AddSeconds(ROUND_TIME_SEC)
+                                                               .AddSeconds(quizSettings.RoundTimeSec)
                                                                .Ceiling(DateTimeRoundLevel.Miliseconds))
             {
                 Quiz.State = PlayState.Lost;
@@ -134,7 +137,7 @@ namespace Backend.Controllers
             }
 
             if(DateTime.Now >= Quiz.RoundStartedAt
-                                   .AddSeconds(ROUND_TIME_SEC)
+                                   .AddSeconds(quizSettings.RoundTimeSec)
                                    .Ceiling(DateTimeRoundLevel.Miliseconds))
             {
                 Quiz.State = PlayState.Lost;
@@ -156,7 +159,7 @@ namespace Backend.Controllers
             {
                 Quiz.Round++;
                 Quiz.JokerUsedThisRound = false;
-                int TimeLeft = (int) Math.Round(ROUND_TIME_SEC - (DateTime.Now - Quiz.RoundStartedAt).TotalSeconds, MidpointRounding.AwayFromZero);
+                int TimeLeft = (int) Math.Round(quizSettings.RoundTimeSec - (DateTime.Now - Quiz.RoundStartedAt).TotalSeconds, MidpointRounding.AwayFromZero);
                 Quiz.DurationQuiz += TimeLeft >= 0 ? (int)Math.Round((DateTime.Now - Quiz.RoundStartedAt).TotalSeconds) : 0;
                 game.IncreaseWin();
                 Session.CurrentQuiz.QuestionsAnswered.Add(Session.CurrentQuiz.CurrentQuestion);
@@ -201,7 +204,7 @@ namespace Backend.Controllers
             var CurrentQuestion = Quiz.CurrentQuestion;
 
             if (DateTime.Now >= Quiz.RoundStartedAt
-                                    .AddSeconds(ROUND_TIME_SEC)
+                                    .AddSeconds(quizSettings.RoundTimeSec)
                                     .Ceiling(DateTimeRoundLevel.Miliseconds))
             {
                 Quiz.State = PlayState.Lost;
@@ -220,7 +223,7 @@ namespace Backend.Controllers
                     Question = QuestionModified,
                     PercentCorrect = CalculatePercentageCorrect(CurrentQuestion),
                     TimeLeftUntil = Quiz.RoundStartedAt
-                                    .AddSeconds(ROUND_TIME_SEC)
+                                    .AddSeconds(quizSettings.RoundTimeSec)
                                     .Ceiling(DateTimeRoundLevel.Miliseconds)
                 };
             }
@@ -230,7 +233,7 @@ namespace Backend.Controllers
                 Question = CurrentQuestion,
                 PercentCorrect = CalculatePercentageCorrect(CurrentQuestion),
                 TimeLeftUntil = Quiz.RoundStartedAt
-                                    .AddSeconds(ROUND_TIME_SEC)
+                                    .AddSeconds(quizSettings.RoundTimeSec)
                                     .Ceiling(DateTimeRoundLevel.Miliseconds)
             };
         }
