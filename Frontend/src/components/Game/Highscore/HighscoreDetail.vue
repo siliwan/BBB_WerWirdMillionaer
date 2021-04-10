@@ -25,6 +25,9 @@
                 <div class="col">
                     Categories: {{ CategoriesFormatted }}
                 </div>
+                <div class="col">
+                    Completed on: {{ Timestamp }}
+                </div>
             </div>
             <div class="row" v-if="isAuthenticated">
                 <div class="col">
@@ -126,6 +129,10 @@
             if(this.highscore.categories !== undefined) {
                 return this.highscore.categories.split(',').join(', ')
             }
+        }
+
+        get Timestamp() {
+            return new Date(this.highscore.timeStamp).toLocaleString('de-CH');
         }
 
         get hasWarning() {

@@ -234,7 +234,8 @@ namespace Backend.Controllers
                 PercentCorrect = CalculatePercentageCorrect(CurrentQuestion),
                 TimeLeftUntil = Quiz.RoundStartedAt
                                     .AddSeconds(quizSettings.RoundTimeSec)
-                                    .Ceiling(DateTimeRoundLevel.Miliseconds)
+                                    .Ceiling(DateTimeRoundLevel.Miliseconds),
+                Points = Quiz.Points
             };
         }
 

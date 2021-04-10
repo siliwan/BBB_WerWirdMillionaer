@@ -10,5 +10,6 @@ namespace Backend.Data.Models.GameSessions.ReponseObjects
         public DateTime TimeLeftUntil { get; set; }
         public Question Question { get; set; }
         public double PercentCorrect { get; set; }
+        public int Points { get; set; }
     }
 }

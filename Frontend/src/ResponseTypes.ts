@@ -11,6 +11,7 @@ export class CurrentQuestion implements IReferencable {
     $id!: string;
     timeLeftUntil!: Date;
     percentCorrect!: number;
+    points!: number;
 
     question!: Question;
     category!: Category;

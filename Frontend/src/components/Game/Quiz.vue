@@ -54,6 +54,11 @@
                             Category: {{ currentQuestion.question.category.name }}
                         </p>
                     </b-col>
+                    <b-col>
+                        <p class="small text-center">
+                            Points: {{ currentQuestion.points }}
+                        </p>
+                    </b-col>
                 </b-row>
             </b-container>
 
