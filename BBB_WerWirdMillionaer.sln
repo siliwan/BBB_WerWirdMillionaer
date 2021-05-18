@@ -10,7 +10,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend", "Backend\Backend.
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Frontend", "Frontend\Frontend.njsproj", "{88D78AD2-0DE6-4035-A7CC-24B88D7BDD8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend-Tests", "Backend-Tests\Backend-Tests.csproj", "{997E655E-04B3-4FFF-9E36-09CA59D2DD80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend-Tests", "Backend-Tests\Backend-Tests.csproj", "{997E655E-04B3-4FFF-9E36-09CA59D2DD80}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{51CC2CF3-9426-46E2-8038-371EA1E017CF}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
