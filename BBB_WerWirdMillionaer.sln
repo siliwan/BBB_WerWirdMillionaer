@@ -12,7 +12,7 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Frontend", "Frontend\Fronte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend-Tests", "Backend-Tests\Backend-Tests.csproj", "{997E655E-04B3-4FFF-9E36-09CA59D2DD80}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{51CC2CF3-9426-46E2-8038-371EA1E017CF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{40278C24-3734-4C79-8B18-88FDA9A935E2}"
 	ProjectSection(SolutionItems) = preProject
 		readme.md = readme.md
 	EndProjectSection
