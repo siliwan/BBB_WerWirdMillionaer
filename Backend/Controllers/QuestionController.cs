@@ -30,7 +30,7 @@ namespace Backend.Controllers
             this.categoryRepository = categoryRepository;
         }
 
-        // GET: api/<QuestionController>
+        // GET api/<QuestionController>
         [HttpGet]
         public IEnumerable<Question> Get()
         {

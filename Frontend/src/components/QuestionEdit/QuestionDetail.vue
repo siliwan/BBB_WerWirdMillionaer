@@ -83,8 +83,8 @@
 
     //@ts-ignore Import works just fine
     import { BFormInput } from "node_modules/bootstrap-vue/src";
-import { NavigationGuardNext, Route } from "node_modules/vue-router/types/router";
-import AuthApi from "@/services/AuthApi";
+    import { NavigationGuardNext, Route } from "node_modules/vue-router/types/router";
+    import AuthApi from "@/services/AuthApi";
 
     type crudMethod = 'new' | 'edit' | 'invalid';
 
@@ -214,7 +214,6 @@ import AuthApi from "@/services/AuthApi";
                 await QuestionCrud.put(this.model.id, this.model.category.id, this.model.questionText)
 
                 //Step 2: Save answers
-
                 for (let i = 0; i < this.model.answers.$values.length; i++) {
                     const answer = this.model.answers.$values[i];
                     await AnswerCrud.update(answer.id, answer.answerText, answer.isCorrect);
